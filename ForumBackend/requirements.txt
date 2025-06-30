@@ -1,0 +1,17 @@
+Django==4.2.7
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.0
+django-cors-headers==4.3.0
+PyJWT==2.8.0
+# mysqlclient==2.2.0 # 需要编译，可能会遇到问题
+PyMySQL==1.1.0 # 纯 Python 实现的 MySQL 客户端
+Pillow==10.1.0
+python-dotenv==1.0.0
+django-filter==23.3
+markdown==3.5.1
+drf-yasg==1.21.7
+# 缓存相关
+django-redis==5.4.0
+redis==5.0.1
+hiredis==2.2.3  # 加速Redis解析器
+

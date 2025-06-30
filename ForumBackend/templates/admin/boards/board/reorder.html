@@ -1,0 +1,141 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}">
+  <style>
+    .sortable-list {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+    .sortable-item {
+      margin: 0 0 5px 0;
+      padding: 10px;
+      background-color: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      cursor: move;
+      display: flex;
+      align-items: center;
+    }
+    .sortable-item:hover {
+      background-color: #f0f0f0;
+    }
+    .sortable-item .handle {
+      margin-right: 10px;
+      color: #999;
+    }
+    .sortable-item .id {
+      margin-right: 10px;
+      font-weight: bold;
+      min-width: 30px;
+    }
+    .sortable-item .name {
+      flex-grow: 1;
+      font-weight: bold;
+    }
+    .sortable-item .description {
+      flex-grow: 2;
+      color: #666;
+      margin-left: 20px;
+    }
+    .sortable-item .order {
+      margin-left: 20px;
+      color: #999;
+    }
+    .ui-sortable-helper {
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .save-order-btn {
+      margin-top: 20px;
+    }
+  </style>
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // 初始化拖拽排序
+      $(".sortable-list").sortable({
+        handle: ".handle",
+        update: function(event, ui) {
+          // 更新显示的顺序
+          $(".sortable-item").each(function(index) {
+            $(this).find(".order").text("顺序: " + index);
+          });
+        }
+      });
+      
+      // 保存排序
+      $("#save-order-form").on("submit", function(e) {
+        e.preventDefault();
+        
+        var boardIds = [];
+        $(".sortable-item").each(function() {
+          boardIds.push($(this).data("id"));
+        });
+        
+        $.ajax({
+          url: $(this).attr("action"),
+          type: "POST",
+          data: {
+            "board_ids[]": boardIds,
+            "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()
+          },
+          success: function(response) {
+            if (response.status === "success") {
+              alert("排序保存成功！");
+            } else {
+              alert("保存失败，请重试！");
+            }
+          },
+          error: function() {
+            alert("发生错误，请重试！");
+          }
+        });
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+  &rsaquo; <a href="{% url 'admin:boards_board_changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+  &rsaquo; {% trans 'Reorder' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <h1>板块排序</h1>
+  <p>拖拽板块调整顺序，然后点击"保存排序"按钮。</p>
+  
+  <form id="save-order-form" action="{% url 'admin:boards_board_reorder' %}" method="post">
+    {% csrf_token %}
+    
+    <ul class="sortable-list">
+      {% for board in boards %}
+      <li class="sortable-item" data-id="{{ board.id }}">
+        <span class="handle">☰</span>
+        <span class="id">#{{ board.id }}</span>
+        <span class="name">{{ board.name }}</span>
+        <span class="description">{{ board.description|truncatechars:100 }}</span>
+        <span class="order">顺序: {{ board.order }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    
+    <div class="submit-row">
+      <input type="submit" value="保存排序" class="default save-order-btn">
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>注册验证码</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        .code {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            margin: 20px 0;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>论坛系统 - 注册验证码</h2>
+        </div>
+        
+        <p>您好，</p>
+        
+        <p>您正在注册论坛系统账号，请使用以下验证码完成注册：</p>
+        
+        <div class="code">{{ code }}</div>
+        
+        <p>验证码有效期为 {{ expire_minutes }} 分钟，请勿泄露给他人。</p>
+        
+        <p>如非本人操作，请忽略此邮件。</p>
+        
+        <div class="footer">
+            <p>此邮件由系统自动发送，请勿回复。</p>
+            <p>© 2023 论坛系统团队</p>
+        </div>
+    </div>
+</body>
+</html>
